@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#14171c">
+<title>Проверка отправки</title>
+<style>
+  body{margin:0;background:#14171c;color:#c9d1d9;font:16px system-ui,sans-serif}
+  #ld{padding:28px 20px;text-align:center}
+  #ld button{margin-top:14px;padding:10px 18px;border-radius:10px;border:1px solid #444;background:#222;color:#fff;font:600 15px system-ui}
+</style>
+</head>
+<body>
+<div id="ld">Загрузка…</div>
+<script>
+/* Страница приложения хранится в Google Apps Script и подгружается отсюда.
+   Обновления делаются в скрипте — этот файл менять не нужно. */
+var API_URL = 'https://script.google.com/macros/s/AKfycbz7YIHYRkrmHLC3FmXWFjejR-t3Mdhbl6KdwKuL-wou3cqTHt7e5nKJaInceTopwHzF/exec';
+function load() {
+  document.getElementById('ld').textContent = 'Загрузка…';
+  fetch(API_URL + '?page=1&t=' + Date.now(), { redirect: 'follow' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function (html) {
+      if (html.indexOf('id="wrap"') < 0) throw new Error('bad page');
+      document.open(); document.write(html); document.close();
+    })
+    .catch(function () {
+      document.getElementById('ld').innerHTML = 'Нет связи с сервером.<br><button onclick="load()">Повторить</button>';
+    });
+}
+load();
+</script>
+</body>
+</html>
